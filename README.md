@@ -1,6 +1,6 @@
 # WoW addon template
 
-A GitHub template for WoW Forever addons, backed by versioned reusable build and release workflows. New addons copy the scaffold once; existing addons can adopt the small caller workflows without moving their source or replacing their tests.
+A GitHub template for WoW Forever addons, backed by versioned reusable build and release workflows. New addons copy the scaffold once; existing addons can adopt the workflow entry points without moving their source or replacing their tests.
 
 ## Start an addon
 
@@ -28,7 +28,9 @@ The manual **Publish existing release to CurseForge** workflow remains available
 
 ## Share improvements across addons
 
-The template's caller workflows reference `workflows-v1.0.1`. The shared workflows live in this repository and support both BigWigs and an addon's existing ZIP builder. Their scripts are checked out from the same selected tooling version. Update both the caller's workflow reference and `tooling-ref` to adopt a new shared release; existing addons do not inherit template file edits automatically.
+Build callers and shared Python tooling are pinned to `workflows-v1.0.1`. Tagged release and manual CurseForge retry callers use the local reusable workflow entry points included in the scaffold. Keep `reusable-build.yml`, `reusable-release.yml`, and `reusable-curseforge.yml` in `.github/workflows/`; removing them can invalidate nested release calls even when branch checks pass. `scripts/check.py` verifies those references.
+
+To adopt a shared tooling upgrade, update remote workflow references and `tooling-ref` together, and refresh the three local entry-point copies from that same version. Existing addons do not inherit template edits automatically.
 
 See [reusable workflows](docs/reusable-workflows.md) for configuration, custom builder inputs, automatic deployment, retry behavior and version upgrades. LootGoblins is a custom-builder consumer: it retains its Lua 5.1/5.4 tests and reproducible Python package builder.
 

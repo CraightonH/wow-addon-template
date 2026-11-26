@@ -9,6 +9,26 @@ import subprocess
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def validate_workflows(root):
+    """Keep template release entry points and their nested calls together."""
+    directory = root / ".github" / "workflows"
+    entries = {
+        "release.yml": "reusable-release.yml",
+        "curseforge.yml": "reusable-curseforge.yml",
+    }
+    for caller, target in entries.items():
+        text = (directory / caller).read_text()
+        expected = f"uses: ./.github/workflows/{target}"
+        if not any(line.strip() == expected for line in text.splitlines()):
+            raise ValueError(f"{caller} must call the template's local {target}")
+    for workflow in directory.glob("*.yml"):
+        for reference in re.findall(r"^\s*uses:\s*(\./\.github/workflows/[^\s#]+)", workflow.read_text(), re.M):
+            target = (root / reference).resolve()
+            target.relative_to(directory.resolve())
+            if not target.is_file():
+                raise ValueError(f"Missing local reusable workflow: {reference} (called by {workflow.name})")
+
+
 def version(tag):
     if not re.fullmatch(r"v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-(alpha|beta)\.(0|[1-9][0-9]*))?", tag):
         raise ValueError("Use vX.Y.Z, vX.Y.Z-alpha.N, or vX.Y.Z-beta.N")
@@ -30,6 +50,7 @@ def main():
         if kind != "tag":
             raise ValueError("Create an annotated tag with git tag -a")
         return
+    validate_workflows(ROOT)
     cfg = json.loads((ROOT / "addon.json").read_text())
     name = cfg["name"]
     if not re.fullmatch(r"[A-Za-z][A-Za-z0-9_]*", name):
@@ -49,7 +70,7 @@ def main():
     for file in sorted((ROOT / "tests").glob("*.lua")):
         subprocess.run(["lua5.1", str(file)], check=True, cwd=ROOT)
     subprocess.run(["python3", "-m", "unittest", "discover", "-s", "tests", "-p", "test_*.py"], check=True, cwd=ROOT)
-    print("TOC, package name, Lua syntax and addon tests passed")
+    print("Workflow references, TOC, package name, Lua syntax and addon tests passed")
 
 
 if __name__ == "__main__":

@@ -1,10 +1,10 @@
 # Reusable addon workflows
 
-The shared workflows and Python release tooling live in this repository. New addons copy the small caller workflows from the template. Existing addons can add the callers and `addon.json` while retaining their own tests, source layout and ZIP builder.
+The shared workflows and Python release tooling live in this repository. New addons copy the scaffold, including its three local reusable workflow entry points. Existing addons can add those files, the callers, and `addon.json` while retaining their own tests, source layout and ZIP builder.
 
 ## Version selection
 
-The current shared release is `workflows-v1.0.1`. Both the workflow's `uses: ...@workflows-v1.0.1` and its `tooling-ref: workflows-v1.0.1` must select the same immutable release. A commit SHA can be used in both places instead. Updating those references adopts shared fixes without copying scripts into the addon. Published shared tags must never be moved; create the next shared version for changes.
+The current shared release is `workflows-v1.0.1`. Remote `uses: ...@workflows-v1.0.1` references and `tooling-ref: workflows-v1.0.1` must select the same immutable release. Release and retry callers use local workflow paths; retain `reusable-build.yml`, `reusable-release.yml`, and `reusable-curseforge.yml` beside them. Refresh these local copies from the chosen tooling version when upgrading. A commit SHA can be used in both places instead. Updating those references adopts shared fixes without copying scripts into the addon. Published shared tags must never be moved; create the next shared version for changes.
 
 ## Addon configuration
 
@@ -55,7 +55,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   release:
-    uses: CraightonH/wow-addon-template/.github/workflows/reusable-release.yml@workflows-v1.0.1
+    uses: ./.github/workflows/reusable-release.yml
     with:
       tooling-ref: workflows-v1.0.1
       test-command: make test LUA=lua5.1 && make test LUA=lua5.4
@@ -64,6 +64,8 @@ jobs:
     secrets:
       CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
 ```
+
+Copy all three reusable workflow entry points before using the release caller above. The manual retry caller likewise uses `./.github/workflows/reusable-curseforge.yml`. Normal checks verify every local workflow dependency and require both publishing entry points to remain local.
 
 Create the `curseforge` environment in the addon repository and add `CF_API_TOKEN` as a repository secret or environment secret. The caller must pass the named secret; nested workflows forward it explicitly. Environment reviewers are optional; leave them unconfigured for automatic deployment. Set `publish-curseforge: false` for GitHub-only releases.
 
@@ -81,6 +83,6 @@ The upload API has no idempotency key. If the response is lost, or upload succee
 
 ## Shared workflow development
 
-Run `python3 -m unittest discover -s shared/tests -v` and Actionlint before tagging a new shared version. Test the template and a custom-builder consumer. Commit changes, create an annotated `workflows-vX.Y.Z` tag and push both. Consumer repositories adopt the new version by changing both references.
+Run `python3 -m unittest discover -s shared/tests -v` and Actionlint before tagging a new shared version. Test the template and a custom-builder consumer. Commit changes, create an annotated `workflows-vX.Y.Z` tag and push both. Consumer repositories adopt the new version by changing remote references and tooling-ref values and refreshing the three local reusable workflow copies from the same version.
 
 The `workflows-` prefix keeps tooling releases separate from addon version tags. The shared Python code is checked out sparsely under `.addon-tooling`; it is excluded from addon packages. Central workflow permissions remain read-only for builds, with Contents write access limited to release/deployment jobs.

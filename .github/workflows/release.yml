@@ -10,7 +10,7 @@ concurrency:
 jobs:
   release:
     if: vars.RELEASE_ENABLED == 'true'
-    uses: CraightonH/wow-addon-template/.github/workflows/reusable-release.yml@workflows-v1.0.1
+    uses: ./.github/workflows/reusable-release.yml
     with:
       tooling-ref: workflows-v1.0.1
       publish-curseforge: ${{ vars.CURSEFORGE_ENABLED == 'true' }}
