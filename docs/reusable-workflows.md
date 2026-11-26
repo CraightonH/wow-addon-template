@@ -10,9 +10,9 @@ The current shared release is `workflows-v1.0.1`. Both the workflow's `uses: ...
 
 ```json
 {
-  "name": "LootGoblin",
+  "name": "LootGoblins",
   "interface": 16001,
-  "source_directory": "LootGoblin",
+  "source_directory": "LootGoblins",
   "artifact_directory": "dist",
   "curseforge_project_id": 1806558,
   "curseforge_version_type_id": 88568
@@ -73,7 +73,7 @@ The caller should set workflow concurrency as shown. The deployment workflow add
 
 ## Recover a failed deploy
 
-`reusable-curseforge.yml` accepts the same tooling version plus a `tag` selecting an existing GitHub release. It checks out that tag's configuration, validates the downloaded manifest and archive against the tag's source commit, and uploads without rebuilding. A caller can expose this through a manual retry workflow, as LootGoblin does.
+`reusable-curseforge.yml` accepts the same tooling version plus a `tag` selecting an existing GitHub release. It checks out that tag's configuration, validates the downloaded manifest and archive against the tag's source commit, and uploads without rebuilding. A caller can expose this through a manual retry workflow, as LootGoblins does.
 
 Successful uploads attach `curseforge-upload.json` to the GitHub release with the CurseForge file ID, project, tag, source commit and ZIP checksum. A matching receipt makes later reruns skip the upload. A conflicting receipt fails. GitHub publication reruns also verify the existing release rather than overwriting its assets.
 

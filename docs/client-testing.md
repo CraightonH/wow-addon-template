@@ -9,4 +9,4 @@ Record addon version, client version and build, interface, character class, and 
 - Test options and defaults, UI scale, moving/resizing frames, and the feature when its target unit, item, spell or data is unavailable.
 - Confirm packaged files include required textures and libraries. Test with and without optional dependencies.
 
-For LootGoblin, cover solo/group changes, roll and queue lifecycle, addon message handling, history and existing saved data. For Rangefinder, cover friendly/enemy nameplates, hover and last-cast range, unknown spells, minimum range, combat and nameplate visibility changes. These addon-specific scenarios require their actual implementations.
+For LootGoblins, cover solo/group changes, roll and queue lifecycle, addon message handling, history and existing saved data. For Rangefinder, cover friendly/enemy nameplates, hover and last-cast range, unknown spells, minimum range, combat and nameplate visibility changes. These addon-specific scenarios require their actual implementations.

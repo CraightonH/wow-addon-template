@@ -30,7 +30,7 @@ The manual **Publish existing release to CurseForge** workflow remains available
 
 The template's caller workflows reference `workflows-v1.0.1`. The shared workflows live in this repository and support both BigWigs and an addon's existing ZIP builder. Their scripts are checked out from the same selected tooling version. Update both the caller's workflow reference and `tooling-ref` to adopt a new shared release; existing addons do not inherit template file edits automatically.
 
-See [reusable workflows](docs/reusable-workflows.md) for configuration, custom builder inputs, automatic deployment, retry behavior and version upgrades. LootGoblin is a custom-builder consumer: it retains its Lua 5.1/5.4 tests and reproducible Python package builder.
+See [reusable workflows](docs/reusable-workflows.md) for configuration, custom builder inputs, automatic deployment, retry behavior and version upgrades. LootGoblins is a custom-builder consumer: it retains its Lua 5.1/5.4 tests and reproducible Python package builder.
 
 ## Watch client changes
 

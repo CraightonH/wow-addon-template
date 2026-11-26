@@ -2,11 +2,11 @@
 
 Keep the existing repository history, source layout, SavedVariables names and tests. Add the caller workflows and addon.json through normal commits. GitHub template files are a scaffold, not an ongoing inheritance relationship.
 
-## LootGoblin
+## LootGoblins
 
 The GitHub repository was retrofitted at source version 0.3.1-alpha. Its existing model, history and integration tests continue to run on Lua 5.1 and 5.4. The original deterministic ZIP builder is retained and now accepts ADDON_RELEASE_VERSION for the packaged TOC and filename, includes LICENSE, and leaves tracked source unchanged.
 
-Its addon.json declares the nested LootGoblin source directory and dist artifact directory. Shared build validation checks the resulting archive and records its checksum, tag, source commit and CurseForge destination. Annotated version tags automatically create a GitHub release and upload the same archive to project 1806558. See the addon repository's docs/releases.md for release and recovery commands.
+Its addon.json declares the nested LootGoblins source directory and dist artifact directory. Shared build validation checks the resulting archive and records its checksum, tag, source commit and CurseForge destination. Annotated version tags automatically create a GitHub release and upload the same archive to project 1806558. See the addon repository's docs/releases.md for release and recovery commands.
 
 A separate, newer local working copy existed during the initial research. It was not merged into the GitHub repository as part of this tooling retrofit. A tag releases the source commit it points to.
 
