@@ -1,0 +1,14 @@
+package-as: ExampleAddon
+enable-nolib-creation: no
+ignore:
+  - .github
+  - .gitignore
+  - .gitattributes
+  - .editorconfig
+  - .pkgmeta
+  - addon.json
+  - scripts
+  - tests
+  - docs
+  - README.md
+  - CHANGELOG.md

@@ -1,0 +1,9 @@
+{
+  "name": "ExampleAddon",
+  "interface": 16001,
+  "curseforge_project_id": 0,
+  "curseforge_version_type_id": 88568,
+  "upstream_repository": "Gethe/wow-ui-source",
+  "upstream_branch": "forever",
+  "reviewed_upstream_commit": "d9c22e32cb240afb82bb2ecefbb78ef935333f59"
+}

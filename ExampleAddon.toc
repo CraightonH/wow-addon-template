@@ -1,0 +1,8 @@
+## Interface: 16001
+## Title: ExampleAddon
+## Notes: A starter addon for WoW Forever.
+## Author: Craighton
+## Version: @project-version@
+## SavedVariables: ExampleAddonDB
+
+Core.lua

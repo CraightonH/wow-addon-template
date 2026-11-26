@@ -1,0 +1,21 @@
+name: Bug report
+description: Report a reproducible addon problem
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Addon version and game build
+      description: Include the output of /dump GetBuildInfo()
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce and expected result
+    validations:
+      required: true
+  - type: textarea
+    id: error
+    attributes:
+      label: Lua error and other enabled addons
+      description: Remove character or account details you do not want to share.

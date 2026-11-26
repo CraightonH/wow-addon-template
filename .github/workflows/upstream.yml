@@ -1,0 +1,37 @@
+name: Check Forever upstream
+on:
+  schedule:
+    - cron: '23 14 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: forever-upstream
+  cancel-in-progress: false
+jobs:
+  detect:
+    if: vars.WATCH_UPSTREAM == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    outputs:
+      changed: ${{ steps.watch.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - id: watch
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: python3 scripts/watch.py
+      - uses: actions/upload-artifact@v7
+        if: steps.watch.outputs.changed == 'true'
+        with:
+          name: upstream-observation
+          path: .release/upstream.json
+  candidate:
+    needs: detect
+    if: needs.detect.outputs.changed == 'true'
+    uses: ./.github/workflows/checks.yml
