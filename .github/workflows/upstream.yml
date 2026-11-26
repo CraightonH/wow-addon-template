@@ -31,6 +31,8 @@ jobs:
         with:
           name: upstream-observation
           path: .release/upstream.json
+          if-no-files-found: error
+          include-hidden-files: true
   candidate:
     needs: detect
     if: needs.detect.outputs.changed == 'true'

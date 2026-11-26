@@ -31,3 +31,4 @@ jobs:
             .release/*.zip
             .release/release.json
           if-no-files-found: error
+          include-hidden-files: true
