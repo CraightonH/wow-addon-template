@@ -1,0 +1,43 @@
+name: Reusable existing-release CurseForge deploy
+on:
+  workflow_call:
+    inputs:
+      tooling-ref:
+        required: true
+        type: string
+      tag:
+        required: true
+        type: string
+    secrets:
+      CF_API_TOKEN:
+        required: true
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: curseforge
+    permissions:
+      contents: write
+    concurrency:
+      group: curseforge-${{ github.repository }}-${{ inputs.tag }}
+      cancel-in-progress: false
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      RELEASE_TAG: ${{ inputs.tag }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.tag }}
+          persist-credentials: false
+      - uses: actions/checkout@v7
+        with:
+          repository: CraightonH/wow-addon-template
+          ref: ${{ inputs.tooling-ref }}
+          path: .addon-tooling
+          sparse-checkout: /shared/
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - name: Upload the existing release and record the file ID
+        env:
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+        run: python3 .addon-tooling/shared/release_tools.py curseforge

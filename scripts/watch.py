@@ -8,8 +8,9 @@ import re
 import subprocess
 import urllib.parse
 import urllib.request
+from pathlib import Path
 
-from artifact import ROOT
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def gh(path, method="GET", body=None):

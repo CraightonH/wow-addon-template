@@ -10,5 +10,6 @@ ignore:
   - scripts
   - tests
   - docs
+  - shared
   - README.md
   - CHANGELOG.md

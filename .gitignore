@@ -1,4 +1,6 @@
 .release/
+.addon-tooling/
+.release-artifact/
 __pycache__/
 *.pyc
 .venv/

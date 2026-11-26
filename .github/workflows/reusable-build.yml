@@ -1,0 +1,74 @@
+name: Reusable addon checks and package
+on:
+  workflow_call:
+    inputs:
+      tooling-ref:
+        description: Same version tag or commit used to call this workflow
+        required: true
+        type: string
+      test-command:
+        type: string
+        default: python3 scripts/check.py
+      package-command:
+        description: Empty uses BigWigs; otherwise run the addon's own builder
+        type: string
+        default: ''
+      release-tag:
+        type: string
+        default: ''
+    outputs:
+      artifact-name:
+        value: ${{ jobs.build.outputs.artifact-name }}
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      artifact-name: ${{ steps.config.outputs.artifact-name }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/checkout@v7
+        with:
+          repository: CraightonH/wow-addon-template
+          ref: ${{ inputs.tooling-ref }}
+          path: .addon-tooling
+          sparse-checkout: /shared/
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - name: Install Lua runtimes
+        run: sudo apt-get update -qq && sudo apt-get install -y lua5.1 lua5.4
+      - name: Validate configuration and release tag
+        id: config
+        env:
+          RELEASE_TAG: ${{ inputs.release-tag }}
+        run: python3 .addon-tooling/shared/release_tools.py prepare
+      - name: Run addon checks
+        env:
+          TEST_COMMAND: ${{ inputs.test-command }}
+        run: bash -euo pipefail -c "$TEST_COMMAND"
+      - name: Build with the addon's builder
+        if: inputs.package-command != ''
+        env:
+          PACKAGE_COMMAND: ${{ inputs.package-command }}
+        run: bash -euo pipefail -c "$PACKAGE_COMMAND"
+      - name: Build with BigWigs without uploading
+        if: inputs.package-command == ''
+        uses: BigWigsMods/packager@01e8631a69c69d7654c788d152630d5fed9e3812 # v2.7.0
+        with:
+          args: -d -g forever
+      - name: Validate package and record its identity
+        env:
+          RELEASE_TAG: ${{ inputs.release-tag }}
+        run: python3 .addon-tooling/shared/release_tools.py manifest
+      - uses: actions/upload-artifact@v7
+        with:
+          name: ${{ steps.config.outputs.artifact-name }}
+          path: |
+            ${{ steps.config.outputs.artifact-directory }}/*.zip
+            ${{ steps.config.outputs.artifact-directory }}/release.json
+          if-no-files-found: error
+          include-hidden-files: true

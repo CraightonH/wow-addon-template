@@ -1,21 +1,21 @@
-# Move existing addons onto the template
+# Adopt shared workflows in an existing addon
 
-Start from a branch or an isolated copy of each existing repository. Preserve history, SavedVariables names, user settings and tests. A template is useful for new repositories; existing addons should adopt the selected files through normal commits.
+Keep the existing repository history, source layout, SavedVariables names and tests. Add the caller workflows and addon.json through normal commits. GitHub template files are a scaffold, not an ongoing inheritance relationship.
 
 ## LootGoblin
 
-The inspected repository already has pure Lua model/history/betting/integration tests, a Makefile, a reproducible Python ZIP builder, and a GitHub checks workflow testing Lua 5.1 and 5.4. Keep those tests and the reproducible builder if they remain useful. Lua 5.1 is the runtime compatibility baseline; 5.4 is an additional portability check.
+The GitHub repository was retrofitted at source version 0.3.1-alpha. Its existing model, history and integration tests continue to run on Lua 5.1 and 5.4. The original deterministic ZIP builder is retained and now accepts ADDON_RELEASE_VERSION for the packaged TOC and filename, includes LICENSE, and leaves tracked source unchanged.
 
-Its source layout is `LootGoblin/LootGoblin.toc`. This starter uses a root TOC for BigWigs packaging. Choose one layout deliberately. Either retain the existing builder and add equivalent manifest validation to its ZIP, or move the addon payload to the root and use BigWigs. Do not copy these checks unchanged into a nested source layout.
+Its addon.json declares the nested LootGoblin source directory and dist artifact directory. Shared build validation checks the resulting archive and records its checksum, tag, source commit and CurseForge destination. Annotated version tags automatically create a GitHub release and upload the same archive to project 1806558. See the addon repository's docs/releases.md for release and recovery commands.
 
-The inspected source version is `0.9.0-alpha`; the template's release grammar uses numbered prereleases such as `v0.9.0-alpha.1`. Choose the next unused public version and keep existing tags intact. Review the inclusion of Demo.lua and any local development controls before the first public package. Retain the existing test runner rather than replacing it with the starter lifecycle test.
+A separate, newer local working copy existed during the initial research. It was not merged into the GitHub repository as part of this tooling retrofit. A tag releases the source commit it points to.
 
-## Rangefinder
+## Rangefinder and future addons
 
-The inspected artifact is version `0.1.9`, with Model.lua, Icons.lua, IconCatalog.lua, Range.lua, Options.lua and Core.lua. The deliverable folder is not by itself evidence of the authoritative Git repository. Confirm the source repository before migration.
+Confirm the authoritative source repository first. Preserve RangefinderDB and RangefinderCharacterDB when migrating Rangefinder. Add addon.json with its own CurseForge project ID, source directory and artifact directory. Copy the caller examples from reusable-workflows.md and supply the existing test and package commands.
 
-Bring all payload files and assets into the chosen layout, preserve `RangefinderDB` and `RangefinderCharacterDB`, and add packaging checks without changing runtime behavior. Replace the starter Core.lua and lifecycle test with the actual implementation and its tests. Keep any generated icon catalog together with its generation instructions and source provenance.
+A custom builder must write exactly one ZIP in a clean artifact directory and use ADDON_RELEASE_VERSION for a tagged build. The ZIP needs a matching addon folder/TOC, included dependencies and license. Keep generated icon/data catalogs with their generation instructions and provenance. Add packaging tests that verify versions, payloads and preservation of source files.
 
-## Shared release metadata
+## Shared release versions
 
-Both inspected addons declare interface 16001 and neither inspected TOC declares a CurseForge project ID. Create one CurseForge project per addon and record those IDs separately. Set repository variables and the upload environment per repository. Publish an alpha first and verify its game version, installation layout, settings and update behavior through the actual CurseForge client before a stable release.
+Use the same version or SHA in both uses and tooling-ref. New shared tooling versions are adopted by updating those references; no shared Python scripts need to be copied into consumer repositories. Run branch CI before tagging an addon release, and test the packaged addon in game before declaring compatibility.

@@ -2,8 +2,9 @@
 import argparse
 import json
 import re
+from pathlib import Path
 
-from artifact import ROOT
+ROOT = Path(__file__).resolve().parents[1]
 
 parser = argparse.ArgumentParser()
 parser.add_argument("name", help="Addon folder name and Lua identifier, e.g. MyAddon")

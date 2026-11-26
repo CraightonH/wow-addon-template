@@ -3,45 +3,16 @@ on:
   push:
     tags: ['v*']
 permissions:
-  contents: read
+  contents: write
 concurrency:
   group: release-${{ github.ref }}
   cancel-in-progress: false
 jobs:
-  validate-tag:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
-          persist-credentials: false
-      - name: Validate annotated version tag
-        env:
-          RELEASE_TAG: ${{ github.ref_name }}
-        run: python3 scripts/check.py --tag-only
-  checks:
-    needs: validate-tag
-    uses: ./.github/workflows/checks.yml
-  github-release:
-    needs: checks
+  release:
     if: vars.RELEASE_ENABLED == 'true'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    env:
-      GH_TOKEN: ${{ github.token }}
-      GH_REPO: ${{ github.repository }}
-      RELEASE_TAG: ${{ github.ref_name }}
-    steps:
-      - uses: actions/download-artifact@v8
-        with:
-          name: addon-${{ github.sha }}
-          path: artifact
-      - name: Create release from checked artifact
-        run: |
-          set -euo pipefail
-          flags=()
-          if [[ "$RELEASE_TAG" == *-alpha* || "$RELEASE_TAG" == *-beta* ]]; then
-            flags+=(--prerelease)
-          fi
-          gh release create "$RELEASE_TAG" --verify-tag --title "$RELEASE_TAG" --generate-notes "${flags[@]}" artifact/*.zip artifact/release.json
+    uses: CraightonH/wow-addon-template/.github/workflows/reusable-release.yml@workflows-v1.0.0
+    with:
+      tooling-ref: workflows-v1.0.0
+      publish-curseforge: ${{ vars.CURSEFORGE_ENABLED == 'true' }}
+    secrets:
+      CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}

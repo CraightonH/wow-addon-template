@@ -1,0 +1,68 @@
+name: Reusable addon tag release
+on:
+  workflow_call:
+    inputs:
+      tooling-ref:
+        required: true
+        type: string
+      test-command:
+        type: string
+        default: python3 scripts/check.py
+      package-command:
+        type: string
+        default: ''
+      publish-curseforge:
+        type: boolean
+        default: false
+    secrets:
+      CF_API_TOKEN:
+        required: false
+jobs:
+  build:
+    if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: read
+    uses: ./.github/workflows/reusable-build.yml
+    with:
+      tooling-ref: ${{ inputs.tooling-ref }}
+      test-command: ${{ inputs.test-command }}
+      package-command: ${{ inputs.package-command }}
+      release-tag: ${{ github.ref_name }}
+  github-release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      RELEASE_TAG: ${{ github.ref_name }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@v7
+        with:
+          repository: CraightonH/wow-addon-template
+          ref: ${{ inputs.tooling-ref }}
+          path: .addon-tooling
+          sparse-checkout: /shared/
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - uses: actions/download-artifact@v8
+        with:
+          name: ${{ needs.build.outputs.artifact-name }}
+          path: .release-artifact
+      - name: Publish the validated artifact to GitHub
+        run: python3 .addon-tooling/shared/release_tools.py github
+  curseforge:
+    needs: github-release
+    if: inputs.publish-curseforge
+    permissions:
+      contents: write
+    uses: ./.github/workflows/reusable-curseforge.yml
+    with:
+      tooling-ref: ${{ inputs.tooling-ref }}
+      tag: ${{ github.ref_name }}
+    secrets:
+      CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
