@@ -44,7 +44,7 @@ def main():
             file.relative_to(ROOT)
             assert file.is_file(), f"Missing TOC file: {line}"
     for file in ROOT.rglob("*.lua"):
-        if not any(part in (".git", ".release", ".addon-tooling", ".release-artifact") for part in file.parts):
+        if not any(part in (".git", ".release", ".addon-tooling", ".addon-packager", ".release-artifact") for part in file.parts):
             subprocess.run(["luac5.1", "-p", str(file)], check=True)
     for file in sorted((ROOT / "tests").glob("*.lua")):
         subprocess.run(["lua5.1", str(file)], check=True, cwd=ROOT)

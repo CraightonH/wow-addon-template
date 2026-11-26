@@ -55,11 +55,24 @@ jobs:
         env:
           PACKAGE_COMMAND: ${{ inputs.package-command }}
         run: bash -euo pipefail -c "$PACKAGE_COMMAND"
+      - name: Check out the pinned packager
+        if: inputs.package-command == ''
+        uses: actions/checkout@v7
+        with:
+          repository: BigWigsMods/packager
+          ref: 01e8631a69c69d7654c788d152630d5fed9e3812 # v2.7.0
+          path: .addon-packager
+          persist-credentials: false
       - name: Build with BigWigs without uploading
         if: inputs.package-command == ''
-        uses: BigWigsMods/packager@01e8631a69c69d7654c788d152630d5fed9e3812 # v2.7.0
-        with:
-          args: -d -g forever
+        env:
+          INPUT_ARGS: -d -g forever
+          INPUT_PANDOC: 'false'
+        run: |
+          bash .addon-packager/setup-packager.sh
+          # This workflow always needs an artifact. Bypass the packager's CI
+          # heuristic that skips branch pushes whose HEAD also has a tag.
+          env -u GITHUB_ACTIONS bash .addon-packager/release.sh -d -g forever
       - name: Validate package and record its identity
         env:
           RELEASE_TAG: ${{ inputs.release-tag }}

@@ -8,6 +8,6 @@ permissions:
   contents: read
 jobs:
   checks:
-    uses: CraightonH/wow-addon-template/.github/workflows/reusable-build.yml@workflows-v1.0.0
+    uses: CraightonH/wow-addon-template/.github/workflows/reusable-build.yml@workflows-v1.0.1
     with:
-      tooling-ref: workflows-v1.0.0
+      tooling-ref: workflows-v1.0.1

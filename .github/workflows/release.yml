@@ -10,9 +10,9 @@ concurrency:
 jobs:
   release:
     if: vars.RELEASE_ENABLED == 'true'
-    uses: CraightonH/wow-addon-template/.github/workflows/reusable-release.yml@workflows-v1.0.0
+    uses: CraightonH/wow-addon-template/.github/workflows/reusable-release.yml@workflows-v1.0.1
     with:
-      tooling-ref: workflows-v1.0.0
+      tooling-ref: workflows-v1.0.1
       publish-curseforge: ${{ vars.CURSEFORGE_ENABLED == 'true' }}
     secrets:
       CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}

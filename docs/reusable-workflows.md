@@ -4,7 +4,7 @@ The shared workflows and Python release tooling live in this repository. New add
 
 ## Version selection
 
-The initial shared release is `workflows-v1.0.0`. Both the workflow's `uses: ...@workflows-v1.0.0` and its `tooling-ref: workflows-v1.0.0` must select the same immutable release. A commit SHA can be used in both places instead. Updating those references adopts shared fixes without copying scripts into the addon. Published shared tags must never be moved; create the next shared version for changes.
+The current shared release is `workflows-v1.0.1`. Both the workflow's `uses: ...@workflows-v1.0.1` and its `tooling-ref: workflows-v1.0.1` must select the same immutable release. A commit SHA can be used in both places instead. Updating those references adopts shared fixes without copying scripts into the addon. Published shared tags must never be moved; create the next shared version for changes.
 
 ## Addon configuration
 
@@ -32,9 +32,9 @@ permissions:
   contents: read
 jobs:
   checks:
-    uses: CraightonH/wow-addon-template/.github/workflows/reusable-build.yml@workflows-v1.0.0
+    uses: CraightonH/wow-addon-template/.github/workflows/reusable-build.yml@workflows-v1.0.1
     with:
-      tooling-ref: workflows-v1.0.0
+      tooling-ref: workflows-v1.0.1
       test-command: make test LUA=lua5.1 && make test LUA=lua5.4
       package-command: python3 scripts/package.py
 ```
@@ -55,9 +55,9 @@ concurrency:
   cancel-in-progress: false
 jobs:
   release:
-    uses: CraightonH/wow-addon-template/.github/workflows/reusable-release.yml@workflows-v1.0.0
+    uses: CraightonH/wow-addon-template/.github/workflows/reusable-release.yml@workflows-v1.0.1
     with:
-      tooling-ref: workflows-v1.0.0
+      tooling-ref: workflows-v1.0.1
       test-command: make test LUA=lua5.1 && make test LUA=lua5.4
       package-command: python3 scripts/package.py
       publish-curseforge: true
